@@ -1,11 +1,22 @@
+const isTagName = (data) => {
+    return typeof data === 'string' && /^[a-z]+$/.test(data);
+};
+
+const isFromDOM = (data) => {
+    return  data instanceof Object &&
+            typeof data.els !== 'undefined' &&
+            data.els.constructor === Array &&
+            data.els.every(el => el instanceof HTMLElement);
+};
+
 class DOM {
     constructor(data) {
         let els;
-        if (DOM.isTagName(data)) {
+        if (isTagName(data)) {
             els = [ document.createElement(data) ];
-        } else if (DOM.isHTML(data)) {
+        } else if (DOM.hasHtmlInString(data)) {
             els = new DOM('div').setContent(data).getChildren();
-        } else if (DOM.isFromDOM(data)) {
+        } else if (isFromDOM(data)) {
             els = data.els;
         } else if (data.constructor === Array) {
             els = data;
@@ -24,19 +35,12 @@ class DOM {
         return new DOM(data);
     }
 
-    static isHTML(data) {
+    static hasHtmlInString(data) {
         return typeof data === 'string' && /<[^>]+>/i.test(data);
     }
 
     static isTagName(data) {
         return typeof data === 'string' && /^[a-z]+$/.test(data);
-    }
-
-    static isFromDOM(data) {
-        return  data instanceof Object &&
-                typeof data.els !== 'undefined' &&
-                data.els.constructor === Array &&
-                data.els.every(el => el instanceof HTMLElement);
     }
     
     setAttributes(attrs = {}) {
@@ -104,7 +108,7 @@ class DOM {
     }
 
     appendChild(elToAppend) {
-        const elsToAppend = [ ...DOM.isFromDOM(elToAppend) ? elToAppend.els : elToAppend ];
+        const elsToAppend = [ ...isFromDOM(elToAppend) ? elToAppend.els : elToAppend ];
         this.els.forEach(el => elsToAppend.forEach(eta => el.appendChild(eta)));
 
         return this;
