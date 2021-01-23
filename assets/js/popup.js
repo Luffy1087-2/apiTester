@@ -54,7 +54,7 @@ class Popup {
     }
 
     createCloseButton(data) {
-        const btn = $('div');
+        const btn = $('button');
         
         btn.addClass('closeButton');
 

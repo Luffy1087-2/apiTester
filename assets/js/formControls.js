@@ -3,6 +3,7 @@ import api from './api';
 import popup from './popup';
 import { $ } from './dom';
 
+//Create a module "MultipleSelect" which contains every method creating optiongroup/option
 class FormControls {
     
     constructor(ajax, api, popup) {
