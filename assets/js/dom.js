@@ -38,10 +38,6 @@ class DOM {
     static hasHtmlInString(data) {
         return typeof data === 'string' && /<[^>]+>/i.test(data);
     }
-
-    static isTagName(data) {
-        return typeof data === 'string' && /^[a-z]+$/.test(data);
-    }
     
     setAttributes(attrs = {}) {
         for (let key in attrs) {
