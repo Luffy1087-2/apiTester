@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>API TESTER</title>
+</head>
+<body>
+    <h1>API TESTER</h1>
+    <form>
+        <fieldset class="environment">
+            <div class="label">
+                <label for="environment">Environment</label>
+                <button type="button" id="showDetails" class="showDetails" title="Click to view environment">?</button>
+            </div>
+            <div class="controls">
+                <select id="environment"></select>
+            </div>
+        </fieldset>
+        <fieldset class="steps">
+            <div class="label">
+                <label for="steps">Pipeline composer</label>
+            </div>
+            <div class="controls">
+                <select id="steps" multiple></select>
+                <button type="button" id="add" class="addStep">Add</button>
+                <button type="button" id="up" class="up">Up</button>
+                <button type="button" id="down" class="down">Down</button>
+                <button type="button" id="remove" class="removeStep">Remove</button>
+                <button type="button" id="save" class="savePipeline">Save</button>
+            </div>
+        </fieldset>
+        <fieldset class="execute">
+            <div class="label">
+                <label for="logs">Log</label>
+            </div>
+            <div class="controls">
+                <textarea disabled id="logs"></textarea>
+            </div>
+            <button type="button" class="execute">Execute</button>
+        </fieldset>
+    </form>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+    "Name": "INT01",
+    "Auth": [
+        { "Key": "IbmKey", "Value": "IbmValue", "Type": "Header" },
+        { "Key": "IbamKey2", "Value": "IbmValue2", "Type": "Header" }
+    ],
+    "Headers": [
+        { "Key": "HeaderKey", "Value": "HeaderValue" }
+    ],
+    "Endpoints": [
+        { "Key": "SetColor", "Value": "Url/${PhotoId}/SetColor" },
+        { "Key": "Ibm", "Value": "Url/$${DynamicHeight}/SetHeight" }
+    ],
+    "Placeholders": [
+        { "Key": "PhotoId", "Value": "7777777" }
+    ]
+ }

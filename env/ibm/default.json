@@ -1,0 +1,16 @@
+{
+    "Name": "INT01",
+    "Headers": [
+        { "Key": "CustomHeaderKey", "Value": "My/Url" },
+        { "Key": "ContentType", "Value": "application/json" },
+        { "Key": "Cookie", "Value": "test=1;" }
+    ],
+    "Endpoints": [
+        { "Key": "GetCart", "Value": "Url/{SessionId}/{IdCart}/Get" },
+        { "Key": "SetColor", "Value": "Url/{ItemId}/Set/{ColorId}" }
+    ],
+    "Data": {
+        "IdSite": "7777",
+        "Placeholders": [ "{IpAddress}", "{IdSite}" ]
+    }
+ }
