@@ -1,12 +1,6 @@
 import { $ } from './dom';
 
 class Popup {
-    constructor(data) {
-        if (typeof data === 'object') {
-            this.open(data);
-        }
-    }
-
     open(data) {
         const body = $(document.body);
         const currentPopup = this.createPopUp(data);
@@ -83,4 +77,4 @@ class Popup {
     }
 }
 
-export default Popup;
+export default new Popup();
