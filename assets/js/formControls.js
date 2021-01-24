@@ -2,88 +2,27 @@ import ajax from './ajax';
 import api from './api';
 import popup from './popup';
 import { $ } from './dom';
+import EnvironmentSelect from './environmentSelect';
+import StepsSelect from './stepsSelect';
 
-//Create a module "MultipleSelect" which contains every method creating optiongroup/option
 class FormControls {
     
-    constructor(ajax, api, popup) {
+    constructor(ajax, api, popup, EnvironmentSelect, StepsSelect) {
         this.ajax = ajax;
         this.api = api;
-        this.popup = new popup();
+        this.popup = popup;
+        const $env = $('#environment');
+        const $steps = $('#steps');
+        this.envSelect = new EnvironmentSelect($env);
+        this.stepsSelect = new StepsSelect($steps);
         $('#save').addEventListener('click', this.savePipeline.bind(this));
         $('#add').addEventListener('click', this.addStepOrScenario.bind(this));
-        $('#up').addEventListener('click', this.swapSteps.bind(this, -1));
-        $('#down').addEventListener('click', this.swapSteps.bind(this, 1));
-        $('#remove').addEventListener('click', this.removeStep.bind(this));
+        $('#up').addEventListener('click', this.stepsSelect.swapSteps.bind(this.stepsSelect, -1));
+        $('#down').addEventListener('click', this.stepsSelect.swapSteps.bind(this.stepsSelect, 1));
+        $('#remove').addEventListener('click', this.stepsSelect.removeStep.bind(this.stepsSelect));
         $('#showDetails').addEventListener('click', this.showEnvironmentDetails.bind(this));
-        $('#environment').addEventListener('change', this.fillSteps.bind(this));
+        $env.addEventListener('change', this.fillSteps.bind(this));
         this.fillSelects();
-    }
-    
-    addOptions(el, value, text) {
-        el.appendChild(this.createSelectChild('option', value, text));
-    }
-
-    addOptionGroup(el, tree) {
-        if (typeof tree.files !== 'undefined') {
-            tree.files.forEach((file) => {
-                this.addOptions(el, { dirName: tree.dirName, queryPath: file.queryPath }, file.name);
-            });
-        }
-
-        if (typeof tree.dirs !== 'undefined') {
-            for (let dir of tree.dirs) {
-                let optGroup = this.createSelectChild('optgroup', dir.dirName);
-                el.appendChild(optGroup);
-                this.addOptionGroup(optGroup, dir);
-            }
-        }
-    }
-
-    createSelectChild(tagName = 'option', value, text = null) {
-        value = typeof value === 'object' ? JSON.stringify(value) : value;
-        const $el = $(tagName);
-        const el = $el.get(0);
-        
-        if (tagName === 'option') {
-            el.value = value;
-            el.text = text || value;
-        } else {
-            el.label = value;
-        }
-
-        return $el;
-    }
-    
-    swapSteps(nextPosition) {
-        const $steps = $('#steps');
-        const steps = $steps.get(0);
-        const selectedIndex = steps.selectedIndex;
-        const nextIndex = selectedIndex+nextPosition;
-        const options = [ ...steps.options ];
-        
-        steps.focus();
-        if (selectedIndex === -1 || typeof options[nextIndex] === 'undefined') { return; }
-    
-        const currentStep = options[selectedIndex];
-        const nextStep = options[nextIndex];
-
-        $steps.empty();
-        options[selectedIndex] = nextStep;
-        options[nextIndex] = currentStep;
-        options.forEach(opt => this.addOptions($steps, opt.value, opt.text));
-        steps.selectedIndex = nextIndex;
-    }
-
-    removeStep() {
-        const steps = $('#steps').get(0);
-        const selectedIndex = steps.selectedIndex;
-
-        if (steps.selectedIndex === -1) { return; }
-
-        steps.options.remove(selectedIndex);
-        steps.selectedIndex  = selectedIndex - 1 > -1 ? selectedIndex - 1 : selectedIndex;
-        steps.focus();
     }
 
     async addStepOrScenario() {
@@ -132,14 +71,14 @@ class FormControls {
     }
 
     async fillEnvs() {
-        const envs = await this.api.getEnvironments();
-        const $env = $('#environment');
+        const envTree = await this.api.getEnvironments();
 
-        this.addOptionGroup($env, envs);
+        this.envSelect.generateEnvironments(envTree);
     }
 
     async fillSteps() {
-        const $env = $('#environment');
+        const $env = this.envSelect.getSelect();
+
         if (!$env.hasJsonValue) {
             return void alert('Cannot retrieve value for environment');
         }
@@ -151,10 +90,9 @@ class FormControls {
         }
 
         env.dataset.value = selectedOption.parentNode.label;
-        const $steps = $('#steps').empty();
-        const steps = await this.api.getSteps($env.jsonValue.dirName);
 
-        steps.forEach((step) => this.addOptions($steps, step.queryPath, step.fileName));
+        const steps = await this.api.getSteps($env.jsonValue.dirName);
+        this.stepsSelect.fillSteps(steps);
     }
 
     async showEnvironmentDetails() {
@@ -165,4 +103,4 @@ class FormControls {
     }
 };
 
-export default FormControls.bind(this, ajax, api, popup);
+export default FormControls.bind(this, ajax, api, popup, EnvironmentSelect, StepsSelect);
