@@ -21,8 +21,8 @@ class FormControls {
         $('#down').addEventListener('click', this.stepsSelect.swapSteps.bind(this.stepsSelect, 1));
         $('#remove').addEventListener('click', this.stepsSelect.removeStep.bind(this.stepsSelect));
         $('#showDetails').addEventListener('click', this.showEnvironmentDetails.bind(this));
-        $env.addEventListener('change', this.fillSteps.bind(this));
-        this.fillSelects();
+        $env.addEventListener('change', this.addSteps.bind(this));
+        this.addEnvironments().then(this.addSteps.bind(this));
     }
 
     async addStepOrScenario() {
@@ -65,18 +65,13 @@ class FormControls {
         }
     }
 
-    async fillSelects() {
-       await this.fillEnvs();
-       await this.fillSteps();
-    }
-
-    async fillEnvs() {
+    async addEnvironments() {
         const envTree = await this.api.getEnvironments();
 
-        this.envSelect.generateEnvironments(envTree);
+        this.envSelect.addTree(envTree);
     }
 
-    async fillSteps() {
+    async addSteps() {
         const $env = this.envSelect.getSelect();
 
         if (!$env.hasJsonValue) {
@@ -92,7 +87,7 @@ class FormControls {
         env.dataset.value = selectedOption.parentNode.label;
 
         const steps = await this.api.getSteps($env.jsonValue.dirName);
-        this.stepsSelect.fillSteps(steps);
+        this.stepsSelect.addSteps(steps);
     }
 
     async showEnvironmentDetails() {

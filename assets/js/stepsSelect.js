@@ -43,7 +43,7 @@ class StepSelect extends Select {
         steps.focus();
     }
 
-    fillSteps(steps) {
+    addSteps(steps) {
         if (!steps || steps.constructor !== Array) {
             throw new TypeError("steps should be type of Array");
         }

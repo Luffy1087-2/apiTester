@@ -5,7 +5,7 @@ class EnvironmentSelect extends Select {
         super($select);
     }
 
-    generateEnvironments(tree) {
+    addTree(tree) {
         if (!tree || typeof tree !== 'object') {
             throw new TypeError('tree should be an object');
         }
