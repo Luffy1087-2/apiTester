@@ -5,7 +5,7 @@ import { $ } from './dom';
 import EnvironmentSelect from './environmentSelect';
 import StepsSelect from './stepsSelect';
 
-class FormControls {
+class FormController {
     
     constructor(ajax, api, popup, EnvironmentSelect, StepsSelect) {
         this.ajax = ajax;
@@ -98,4 +98,4 @@ class FormControls {
     }
 };
 
-export default FormControls.bind(this, ajax, api, popup, EnvironmentSelect, StepsSelect);
+export default FormController.bind(this, ajax, api, popup, EnvironmentSelect, StepsSelect);
