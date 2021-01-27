@@ -10,7 +10,7 @@ const isFromDOM = (data) => {
 };
 
 class DOM {
-    constructor(data) {
+    constructor (data) {
         let els;
         if (isTagName(data)) {
             els = [ document.createElement(data) ];
@@ -31,15 +31,15 @@ class DOM {
         return this;
     }
 
-    static $(data) {
+    static $ (data) {
         return new DOM(data);
     }
 
-    static hasHtmlInString(data) {
+    static hasHtmlInString (data) {
         return typeof data === 'string' && /<[^>]+>/i.test(data);
     }
     
-    setAttributes(attrs = {}) {
+    setAttributes (attrs = {}) {
         for (let key in attrs) {
             key = key.toLowerCase();
             if (key === 'class') {
@@ -54,7 +54,7 @@ class DOM {
         return this;
     }
 
-    addStyle(styles) {
+    addStyle (styles) {
         const rules = styles.split(';').map((style => style.trim()));
         for (let rule of rules) {
             let [ ruleKey, ruleValue ] = rule.split(':');
@@ -69,48 +69,48 @@ class DOM {
         return this;
     }
 
-    getAttribute(attrName) {
+    getAttribute (attrName) {
         return this.els[0].getAttribute(attrName);
     }
 
-    setAttribute(attrName, attrValue) {
+    setAttribute (attrName, attrValue) {
         this.els.forEach(el => el.setAttribute(attrName, attrValue));
 
         return this;
     }
 
-    addClass(className) {
+    addClass (className) {
         this.els.forEach(el => el.classList.add(className));
 
         return this;
     }
 
-    removeClass(className) {
+    removeClass (className) {
         this.els.forEach(el => el.classList.remove(className));
 
         return this;
     }
 
-    toggleClass(className) {
+    toggleClass (className) {
         this.els.forEach(el => el.classList.toggle(className));
         
         return this;
     }
 
-    setContent(content, shouldAppend = false) {
+    setContent (content, shouldAppend = false) {
         this.els.forEach(el => el.innerHTML = shouldAppend ? el.innerHTML.concat(content) : content);
 
         return this;
     }
 
-    appendChild(elToAppend) {
+    appendChild (elToAppend) {
         const elsToAppend = [ ...isFromDOM(elToAppend) ? elToAppend.els : elToAppend ];
         this.els.forEach(el => elsToAppend.forEach(eta => el.appendChild(eta)));
 
         return this;
     }
 
-    empty() {
+    empty () {
         this.els.forEach(el => {
             while (el.children.length > 0) {
                el.firstChild.remove();
@@ -120,39 +120,39 @@ class DOM {
         return this;
     }
 
-    addEventListener(evtName, callback) {
+    addEventListener (evtName, callback) {
         this.els.forEach(el => el.addEventListener(evtName, callback));
 
         return this;
     }
 
-    querySelector(selector) {
+    querySelector (selector) {
         const context = this.els[0] || document;
         
         return $(context.querySelector(selector));
     }
 
-    getChildren() {
+    getChildren () {
         return [ ...this.el.children ];
     }
 
-    get(index) {
+    get (index) {
         return this.els[index];
     }
 
-    get hasValue() {
+    get hasValue () {
         return !!this._els;
     }
 
-    get els() {
+    get els () {
         return this._els;
     }
 
-    set els(els) {
+    set els (els) {
         this._els = els;
     }
 
-    get hasJsonValue() {
+    get hasJsonValue () {
         try {
             return JSON.parse(this._els[0].value);
         } catch(e) {
@@ -160,8 +160,14 @@ class DOM {
         }
     }
 
-    get jsonValue() {
+    get jsonValue () {
         return JSON.parse(this._els[0].value);
+    }
+
+    *[Symbol.iterator] () {
+        for (let el of this.els) {
+            yield el;
+        }
     }
 }
 
