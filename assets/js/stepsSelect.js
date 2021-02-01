@@ -43,14 +43,16 @@ class StepSelect extends Select {
         steps.focus();
     }
 
-    addSteps(steps) {
+    addSteps(steps, shouldEmpty) {
         if (!steps || steps.constructor !== Array) {
             throw new TypeError("steps should be type of Array");
         }
 
         const $steps = this.getSelect();
+        if (shouldEmpty) {
+            $steps.empty();
+        }
 
-        $steps.empty();
         steps.forEach((step) => this.createAndAddOption(step.fileName, step.queryPath));
     }
 }

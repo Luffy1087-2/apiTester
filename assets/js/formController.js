@@ -31,13 +31,9 @@ class FormController {
         if (!stepsOrScenario || !stepsOrScenario.areSteps && !stepsOrScenario.isScenario || stepsOrScenario.paths.length === 0) {
             return;
         }
-        
-        const $steps = $('#steps');
-        if (stepsOrScenario.isScenario) {
-            $steps.empty();
-        }
 
-        stepsOrScenario.paths.forEach((path) => this.addOptions($steps, path.queryPath, path.fileName));
+        var steps = stepsOrScenario.paths.map(p => ( { fileName: p.fileName, queryPath: p.queryPath } ));
+        this.stepsSelect.addSteps(steps, stepsOrScenario.isScenario);
     }
 
     async savePipeline() {
@@ -51,7 +47,7 @@ class FormController {
             return;
         }
 
-        const stepsObj = Array.prototype.slice.call(steps.options).reduce((prev, cur) => {
+        const stepsObj = Array.from(steps.options).reduce((prev, cur) => {
             prev.steps.push(cur.value);
 
             return prev;
@@ -87,7 +83,7 @@ class FormController {
         env.dataset.value = selectedOption.parentNode.label;
 
         const steps = await this.api.getSteps($env.jsonValue.dirName);
-        this.stepsSelect.addSteps(steps);
+        this.stepsSelect.addSteps(steps, true);
     }
 
     async showEnvironmentDetails() {

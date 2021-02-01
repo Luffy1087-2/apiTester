@@ -14,7 +14,7 @@ class Select {
     }
  
     getOption(text, value) {
-        const $option = $('option');
+        const $option = $('<option>');
         const option = $option.get(0);
 
         option.text = text;
@@ -24,7 +24,7 @@ class Select {
     }
 
     getOptGroup(label) {
-        const $optGroup = $('optgroup');
+        const $optGroup = $('<optgroup>');
 
         $optGroup.get(0).label = label;
 

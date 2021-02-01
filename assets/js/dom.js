@@ -1,10 +1,10 @@
-const isTagName = (data) => {
-    return typeof data === 'string' && /^[a-z]+$/.test(data);
+const isSelector = (data) => {
+    return typeof data === 'string' && /^([^<]|[a-z#\.])+$/.test(data);
 };
 
 const isFromDOM = (data) => {
-    return  data instanceof Object &&
-            typeof data.els !== 'undefined' &&
+    return  data instanceof DOM &&
+            data.els &&
             data.els.constructor === Array &&
             data.els.every(el => el instanceof HTMLElement);
 };
@@ -12,18 +12,18 @@ const isFromDOM = (data) => {
 class DOM {
     constructor (data) {
         let els;
-        if (isTagName(data)) {
-            els = [ document.createElement(data) ];
-        } else if (DOM.hasHtmlInString(data)) {
-            els = new DOM('div').setContent(data).getChildren();
+        if (isSelector(data)) {
+            els = Array.from(document.querySelectorAll(data));
+        } else if (DOM.shouldCreateDOM(data)) {
+            els = $(document.createElement('div')).setContent(data).getChildren();
         } else if (isFromDOM(data)) {
-            els = data.els;
-        } else if (data.constructor === Array) {
+            els = data.get(0);
+        } else if (data && data.constructor === Array && data.els.every(el => el instanceof HTMLElement)) {
             els = data;
-        } else if (data instanceof HTMLElement) {
+        } else if (data instanceof HTMLElement || data instanceof HTMLDocument) {
             els = [ data ];
         } else {
-            els = [ ...document.querySelectorAll(data) ];
+            els = [];
         }
 
         this.els = els;
@@ -35,7 +35,7 @@ class DOM {
         return new DOM(data);
     }
 
-    static hasHtmlInString (data) {
+    static shouldCreateDOM (data) {
         return typeof data === 'string' && /<[^>]+>/i.test(data);
     }
     
@@ -129,19 +129,32 @@ class DOM {
     querySelector (selector) {
         const context = this.els[0] || document;
         
-        return $(context.querySelector(selector));
+        return context.querySelector(selector);
+    }
+
+    $querySelector (selector) {
+        return $(this.querySelector(selector));
+    }
+
+    querySelectorAll (selector, $context) {
+        $context = $context || this.els;
+        let els = [];
+
+        $context.forEach(el => els = [ ...el.querySelectorAll(selector) ]);
+
+        return els;
+    }
+
+    $querySelectorAll (selector, $context) {
+        return this.querySelectorAll(selector, $context).map(el => $(el));
     }
 
     getChildren () {
-        return [ ...this.el.children ];
+        return [ ...this.els[0].children ];
     }
 
     get (index) {
         return this.els[index];
-    }
-
-    get hasValue () {
-        return !!this._els;
     }
 
     get els () {
